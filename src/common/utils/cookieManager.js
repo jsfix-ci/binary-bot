@@ -11,7 +11,7 @@ export const CookieStorage = function(cookieName, cookieDomain) {
 
 CookieStorage.prototype = {
     read() {
-        const cookieValue = Cookies.get(this.cookieName);
+        const cookieValue = JSON.parse(Cookies.get(this.cookieName));
         try {
             this.value = cookieValue ? JSON.parse(cookieValue) : {};
         } catch (e) {
@@ -23,7 +23,7 @@ CookieStorage.prototype = {
         if (!this.initialized) this.read();
         this.value = val;
         if (expireDate) this.expires = expireDate;
-        Cookies.set(this.cookieName, this.value, {
+        Cookies.set(this.cookieName, JSON.stringify(this.value), {
             expires : this.expires,
             path    : this.path,
             domain  : this.domain,
@@ -38,7 +38,7 @@ CookieStorage.prototype = {
     set(key, val, options) {
         if (!this.initialized) this.read();
         this.value[key] = val;
-        Cookies.set(this.cookieName, this.value, {
+        Cookies.set(this.cookieName, JSON.stringify(this.value), {
             expires: new Date(this.expires),
             path   : this.path,
             domain : this.domain,
@@ -54,7 +54,7 @@ CookieStorage.prototype = {
 };
 
 export const setCookieLanguage = lang => {
-    if (!Cookies.get('language') || lang) {
+    if (!JSON.parse(Cookies.get('language')) || lang) {
         const cookie = new CookieStorage('language');
         cookie.write(lang.toUpperCase(), undefined, true, 'none');
     }
